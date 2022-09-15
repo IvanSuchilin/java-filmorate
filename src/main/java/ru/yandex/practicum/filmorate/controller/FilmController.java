@@ -21,13 +21,14 @@ public class FilmController {
 
         @GetMapping
         public List<Film> findAll() {
-
+            log.debug("Получен запрос GET /films.");
             log.debug("Текущее количество фильмов: {}", films.size());
             return new ArrayList<>(films.values());
         }
 
         @PostMapping
         public Film create(@RequestBody Film film) {
+            log.debug("Получен запрос POST /films.");
             filmId++;
             film.setId(filmId);
             validateFilm(film);
@@ -38,6 +39,7 @@ public class FilmController {
 
         @PutMapping
         public Film put(@RequestBody Film film) {
+            log.debug("Получен запрос PUT /films.");
             validateFilm(film);
             if (!films.containsKey(film.getId())){
                 throw new RuntimeException("Нет такого id");
@@ -47,10 +49,10 @@ public class FilmController {
             return film;
         }
 
-        private void validateFilm(Film film){
+        void validateFilm(Film film){
             if(film.getName() == null || film.getName().isBlank()) {
-                log.error("Название фильма н может быть пустым");
-                throw new InvalidFilmNameException("Название фильма н может быть пустым");
+                log.error("Название фильма не может быть пустым");
+                throw new InvalidFilmNameException("Название фильма не может быть пустым");
             }
             if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
                 log.error("Дата релиза не должна быть раньше 28.12.1985");

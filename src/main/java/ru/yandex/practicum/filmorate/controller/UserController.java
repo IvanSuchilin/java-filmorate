@@ -19,12 +19,14 @@ public class UserController {
 
     @GetMapping
     public List<User> findAll() {
+        log.debug("Получен запрос GET /users.");
         log.debug("Текущее количество пользователей: {}", users.size());
         return new ArrayList<>(users.values());
     }
 
     @PostMapping
     public User create(@RequestBody User user) {
+        log.debug("Получен запрос POST /users.");
         userId++;
         user.setId(userId);
         validateUser(user);
@@ -35,6 +37,7 @@ public class UserController {
 
     @PutMapping
     public User put(@RequestBody User user) {
+        log.debug("Получен запрос PUT /users.");
         validateUser(user);
         if (!users.containsKey(user.getId())){
             throw new RuntimeException("Нет такого id");
@@ -45,7 +48,7 @@ public class UserController {
 
     }
 
-    private void validateUser (User user){
+    void validateUser (User user){
         if(user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.error("Адрес электронной почты не может быть пустым и должен содержать символ @");
             throw new InvalidEmailException("Адрес электронной почты не может быть пустым и должен содержать символ @");
@@ -58,7 +61,7 @@ public class UserController {
             log.error("Логин не может быть пустым и содержать пробелы");
             throw new InvalidLoginException("Логин не может быть пустым и содержать пробелы");
         }
-        if (user.getName().isBlank() || user.getName() == null){
+        if (user.getName() == null || user.getName().isBlank()){
             log.error("Имя пользователя путо - используется логин в качестве имени");
             user.setName(user.getLogin());
         }
