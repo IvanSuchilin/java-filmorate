@@ -15,7 +15,7 @@ import java.util.Map;
 @RequestMapping("/films")
 public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
-    Validation validation = new Validation();
+    private Validation validation = new Validation();
     private int filmId = 0;
 
     @GetMapping

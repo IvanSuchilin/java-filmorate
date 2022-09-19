@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.validation;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class ValidationTest {
-    Validation validation = new Validation();
+   private Validation validation;
     final String LONG_DESCRIPTION = "Хронологическая предыстория трилогии «Властелин колец» — кинотрилогия Хоббит. " +
             "Властелин колец является одним из самых крупных проектов в истории кино. " +
             "Его реализация заняла восемь лет; все три фильма были сняты одновременно в " +
@@ -33,6 +34,12 @@ class ValidationTest {
             "Гондора, его товарищи эльф Леголас, гном Гимли и волшебник Гэндальф объединяют " +
             "Свободные народы Средиземья для противостояния армиям Саурона в Войне Кольца.";
     final LocalDate GOOD_DATE = LocalDate.of(1990, 11, 14);
+
+    @BeforeEach
+    void setUp() {
+        validation = new Validation();
+    }
+
 
     @Test
     void userWithWrongEmailTest() {

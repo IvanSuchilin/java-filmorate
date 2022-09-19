@@ -12,7 +12,7 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
     private Map<Integer, User> users = new HashMap<>();
-    Validation validation = new Validation();
+    private Validation validation = new Validation();
     private int userId = 0;
 
     @GetMapping
