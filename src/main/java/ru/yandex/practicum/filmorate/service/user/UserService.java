@@ -3,14 +3,12 @@ package ru.yandex.practicum.filmorate.service.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -91,9 +89,25 @@ public class UserService {
         }
         List<Integer> firstFriendsList = actualUsers.get(id).getFriendsId();
         List<Integer> secondFriendsList = actualUsers.get(otherId).getFriendsId();
-        log.debug("Получен список общих друзей пользователей {} и {} ", actualUsers.get(id).getName(),
+        log.debug("Получен список общих друзей пользователей {} и {}", actualUsers.get(id).getName(),
                 actualUsers.get(otherId).getName());
         return firstFriendsList.stream().filter(secondFriendsList::contains).collect(Collectors.toList());
+    }
+
+    public User getUserById(Integer id) {
+        log.debug("Получен запрос GET /users/{id}");
+        Map<Integer, User> actualUsers = userStorage.getUsers();
+        if (!actualUsers.containsKey(id)) {
+            throw new RuntimeException("Нет такого id");
+        }
+        return actualUsers.get(id);
+    }
+
+    public List<Integer> getFriendsList(int id){
+        log.debug("\"Получен запрос GET /users/{id}/friends");
+        Map<Integer, User> actualUsers = userStorage.getUsers();
+        log.debug("Получен список друзей пользователя {}", actualUsers.get(id).getName());
+        return actualUsers.get(id).getFriendsId();
     }
 }
 
