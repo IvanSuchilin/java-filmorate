@@ -45,10 +45,10 @@ public class UserService {
         return userStorage.create(user);
     }
 
-    public User put(User user) {
+    public User update(User user) {
         log.debug("Получен запрос PUT /users.");
         validateUser(user);
-        return userStorage.put(user);
+        return userStorage.update(user);
     }
 
     public void delete(Integer id){

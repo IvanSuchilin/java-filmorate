@@ -32,7 +32,7 @@ public class UserController {
 
     @PutMapping
     public User put(@RequestBody User user) {
-        return userService.put(user);
+        return userService.update(user);
     }
 
     @DeleteMapping("/{id}")

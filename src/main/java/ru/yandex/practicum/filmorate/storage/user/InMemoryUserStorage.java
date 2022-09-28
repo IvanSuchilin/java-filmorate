@@ -18,10 +18,10 @@ public class InMemoryUserStorage implements UserStorage {
         return users;
     }
 
-    @Override
+    /*@Override
     public void setUsers(Map<Integer, User> users) {
         this.users = users;
-    }
+    }*/
 
     @Override
     public User create(User user) {
@@ -31,7 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User put(User user) {
+    public User update(User user) {
         if (!users.containsKey(user.getId())) {
             throw new RuntimeException("Нет такого id");
         }
