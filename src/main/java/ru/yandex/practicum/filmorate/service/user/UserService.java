@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -51,17 +52,23 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    public void delete(Integer id){
+    public void delete(Integer id) {
         log.debug("Получен запрос DELETE /users/{id}.");
-        User user = userStorage.getUsers().get(id);
+        Map<Integer, User> actualUsers = userStorage.getUsers();
+        if (!actualUsers.containsKey(id)) {
+            throw new DataNotFoundException("Нет такого id");
+        }
+        User user = actualUsers.get(id);
         validateUser(user);
-        userStorage.delete(user);}
+        userStorage.delete(user);
+
+    }
 
     public void addFriend(int id, int friendId) {
         log.debug("Получен запрос PUT /users/{id}/friends/{friendId}.");
         Map<Integer, User> actualUsers = userStorage.getUsers();
         if (!actualUsers.containsKey(id) || !actualUsers.containsKey(friendId)) {
-            throw new RuntimeException("Нет такого id");
+            throw new DataNotFoundException("Нет такого id");
         }
         actualUsers.get(id).getFriendsId().add(friendId);
         actualUsers.get(friendId).getFriendsId().add(id);
@@ -73,7 +80,7 @@ public class UserService {
         log.debug("Получен запрос DELETE /users/{id}/friends/{friendId}.");
         Map<Integer, User> actualUsers = userStorage.getUsers();
         if (!actualUsers.containsKey(id) || !actualUsers.containsKey(friendId)) {
-            throw new RuntimeException("Нет такого id");
+            throw new DataNotFoundException("Нет такого id");
         }
         actualUsers.get(id).getFriendsId().remove(friendId);
         actualUsers.get(friendId).getFriendsId().remove(id);
@@ -85,7 +92,7 @@ public class UserService {
         log.debug("Получен запрос GET /users/{id}/friends/common/{otherId}.");
         Map<Integer, User> actualUsers = userStorage.getUsers();
         if (!actualUsers.containsKey(id) || !actualUsers.containsKey(otherId)) {
-            throw new RuntimeException("Нет такого id");
+            throw new DataNotFoundException("Нет такого id");
         }
         List<Integer> firstFriendsList = actualUsers.get(id).getFriendsId();
         List<Integer> secondFriendsList = actualUsers.get(otherId).getFriendsId();
@@ -98,7 +105,7 @@ public class UserService {
         log.debug("Получен запрос GET /users/{id}");
         Map<Integer, User> actualUsers = userStorage.getUsers();
         if (!actualUsers.containsKey(id)) {
-            throw new RuntimeException("Нет такого id");
+            throw new DataNotFoundException("Нет такого id");
         }
         return actualUsers.get(id);
     }
