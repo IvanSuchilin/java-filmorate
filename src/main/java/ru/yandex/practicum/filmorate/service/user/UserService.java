@@ -2,8 +2,10 @@ package ru.yandex.practicum.filmorate.service.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -40,15 +42,19 @@ public class UserService {
 
     public User create(User user) {
         log.debug("Получен запрос POST /users.");
+        validateUser(user);
         userId++;
         user.setId(userId);
-        validateUser(user);
         return userStorage.create(user);
     }
 
     public User update(User user) {
-        log.debug("Получен запрос PUT /users.");
+        Map<Integer, User> actualUsers = userStorage.getUsers();
+        if (!actualUsers.containsKey(user.getId())) {
+            throw new DataNotFoundException("Нет такого id");
+        }
         validateUser(user);
+        log.debug("Получен запрос PUT /users.");
         return userStorage.update(user);
     }
 
@@ -98,6 +104,9 @@ public class UserService {
         List<Integer> secondFriendsList = actualUsers.get(otherId).getFriendsId();
         log.debug("Получен список общих друзей пользователей {} и {}", actualUsers.get(id).getName(),
                 actualUsers.get(otherId).getName());
+        if (firstFriendsList.isEmpty() || secondFriendsList.isEmpty()){
+            return new ArrayList<>();
+        }
         return firstFriendsList.stream().filter(secondFriendsList::contains).collect(Collectors.toList());
     }
 

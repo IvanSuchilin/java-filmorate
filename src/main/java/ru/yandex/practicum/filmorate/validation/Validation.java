@@ -33,6 +33,10 @@ public class Validation {
     }
 
     public void validateUser(User user) {
+        /*if (user.getId() < 0) {
+            log.error("id Должен быть неотрицательным");
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "id Должен быть неотрицательным");
+        }*/
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.error("Адрес электронной почты не может быть пустым и должен содержать символ @");
             throw new ValidationException(HttpStatus.BAD_REQUEST, "Адрес электронной почты не может быть пустым и должен содержать символ @");

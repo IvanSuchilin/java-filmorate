@@ -10,7 +10,7 @@ import java.util.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping
 public class UserController {
 
     private final UserService userService;
@@ -20,46 +20,46 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/users")
     public Collection<User> findAll() {
         return userService.findAll();
     }
 
-    @PostMapping
+    @PostMapping("/users")
     public User create(@RequestBody User user) {
         return userService.create(user);
     }
 
-    @PutMapping
+    @PutMapping("/users")
     public User put(@RequestBody User user) {
         return userService.update(user);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/users/{id}")
     public void delete(@PathVariable("id") Integer id){
         userService.delete(id);
     }
 
-    @GetMapping("/{id}")
-    public void get(@PathVariable("id") Integer id){
-        userService.getUserById(id);
+    @GetMapping("/users/{id}")
+    public User get(@PathVariable("id") Integer id){
+        return userService.getUserById(id);
     }
-     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend (@PathVariable("id") int id, @PathVariable("friendId") int friendId){
+     @PutMapping("/users/{id}/friends/{friendId}")
+    public void addFriend (@PathVariable ("id") int id, @PathVariable ("friendId") int friendId){
         userService.addFriend(id, friendId);
      }
 
-    @DeleteMapping ("/{id}/friends/{friendId}")
+    @DeleteMapping ("/users/{id}/friends/{friendId}")
     public void deleteFriend (@PathVariable("id") int id, @PathVariable("friendId") int friendId){
         userService.deleteFriend(id, friendId);
     }
 
-    @GetMapping("/{id}/friends")
+    @GetMapping("/users/{id}/friends")
     public List<Integer> getFriendsList(@PathVariable("id") Integer id){
         return userService.getFriendsList(id);
     }
 
-    @GetMapping("/{id}/friends/common/{otherId}")
+    @GetMapping("/users/{id}/friends/common/{otherId}")
     public List<Integer> getCommonFriendsList(@PathVariable("id") Integer id, @PathVariable("otherId") Integer otherId){
         return userService.getCommonFriend(id, otherId);
     }
