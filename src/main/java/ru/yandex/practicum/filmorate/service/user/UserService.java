@@ -73,11 +73,12 @@ public class UserService {
     public void addFriend(int id, int friendId) {
         log.debug("Получен запрос PUT /users/{id}/friends/{friendId}.");
         Map<Integer, User> actualUsers = userStorage.getUsers();
+        System.out.println(actualUsers);
         if (!actualUsers.containsKey(id) || !actualUsers.containsKey(friendId)) {
             throw new DataNotFoundException("Нет такого id");
         }
-        actualUsers.get(id).getFriendsId().add(friendId);
-        actualUsers.get(friendId).getFriendsId().add(id);
+        userStorage.getUsers().get(id).getFriendsId().add(friendId);
+        userStorage.getUsers().get(friendId).getFriendsId().add(id);
         log.debug("Пользователи {} и {} теперь друзья", actualUsers.get(id).getName(),
                 actualUsers.get(friendId).getName());
     }
@@ -123,6 +124,7 @@ public class UserService {
         log.debug("\"Получен запрос GET /users/{id}/friends");
         Map<Integer, User> actualUsers = userStorage.getUsers();
         log.debug("Получен список друзей пользователя {}", actualUsers.get(id).getName());
+        System.out.println(actualUsers.get(id).getFriendsId());
         return actualUsers.get(id).getFriendsId();
     }
 }
