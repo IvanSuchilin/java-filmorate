@@ -11,17 +11,12 @@ import java.util.Map;
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
-    private Map<Integer, User> users = new HashMap<>();
+    private final Map<Integer, User> users = new HashMap<>();
 
     @Override
     public Map<Integer, User> getUsers() {
         return users;
     }
-
-    /*@Override
-    public void setUsers(Map<Integer, User> users) {
-        this.users = users;
-    }*/
 
     @Override
     public User create(User user) {

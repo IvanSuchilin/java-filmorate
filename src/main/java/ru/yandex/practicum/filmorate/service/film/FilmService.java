@@ -21,19 +21,19 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class FilmService {
-    private Validation validation;
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
+    private final Validation validation;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
     private int filmId = 0;
 
     @Autowired
-    public FilmService (Validation validation, InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage){
+    public FilmService(Validation validation, InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
         this.validation = validation;
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
-
     }
-    public void validateFilm(Film film){
+
+    public void validateFilm(Film film) {
         validation.validateFilm(film);
     }
 
@@ -45,19 +45,23 @@ public class FilmService {
 
     public Film create(Film film) {
         log.debug("Получен запрос POST /films.");
+        validateFilm(film);
         filmId++;
         film.setId(filmId);
-        validateFilm(film);
         return filmStorage.create(film);
     }
 
     public Film update(Film film) {
         log.debug("Получен запрос PUT /films.");
+        Map<Integer, Film> actualFilms = filmStorage.getFilms();
+        if (!actualFilms.containsKey(film.getId())) {
+            throw new DataNotFoundException("Нет такого id");
+        }
         validateFilm(film);
         return filmStorage.update(film);
     }
 
-    public void delete(Integer id){
+    public void delete(Integer id) {
         log.debug("Получен запрос DELETE /films/{id}.");
         Map<Integer, Film> actualFilms = filmStorage.getFilms();
         if (!actualFilms.containsKey(id)) {
@@ -65,14 +69,18 @@ public class FilmService {
         }
         Film film = actualFilms.get(id);
         validateFilm(film);
-        filmStorage.delete(film);}
+        filmStorage.delete(film);
+    }
 
     public void addLike(int id, int userId) {
         log.debug("Получен запрос PUT /films/{id}/like/{userId}.");
         Map<Integer, Film> actualFilms = filmStorage.getFilms();
         Map<Integer, User> actualUsers = userStorage.getUsers();
-        if (!actualFilms.containsKey(id) || !actualUsers.containsKey(userId)) {
-            throw new DataNotFoundException("Нет такого id");
+        if (!actualFilms.containsKey(id)) {
+            throw new DataNotFoundException("Нет такого id - фильма");
+        }
+        if (!actualUsers.containsKey(userId)) {
+            throw new DataNotFoundException("Нет такого id - пользователя");
         }
         Film film = actualFilms.get(id);
         film.addLike(userId);

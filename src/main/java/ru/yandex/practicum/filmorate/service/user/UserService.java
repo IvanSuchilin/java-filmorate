@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    private Validation validation;
-    private UserStorage userStorage;
+    private final Validation validation;
+    private final UserStorage userStorage;
     private int userId = 0;
 
     @Autowired

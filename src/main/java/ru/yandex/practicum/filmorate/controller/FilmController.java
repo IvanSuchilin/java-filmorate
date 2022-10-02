@@ -4,12 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
-import ru.yandex.practicum.filmorate.service.user.UserService;
-import ru.yandex.practicum.filmorate.validation.Validation;
 
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,27 +35,27 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id){
+    public void delete(@PathVariable("id") Integer id) {
         filmService.delete(id);
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable("id") Integer id){
-       return filmService.getFilmById(id);
+    public Film getFilmById(@PathVariable("id") Integer id) {
+        return filmService.getFilmById(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable("id") int id, @PathVariable("userId") int userId){
+    public void addLike(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable("id") int id, @PathVariable("userId") int userId){
+    public void deleteLike(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         filmService.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam (defaultValue = "10") int count){
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getPopularFilms(count);
     }
 }

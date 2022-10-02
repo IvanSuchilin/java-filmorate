@@ -8,8 +8,6 @@ public interface UserStorage {
 
      Map<Integer, User> getUsers();
 
-    // void setUsers(Map<Integer, User> users);
-
     User create(User user);
 
     User update(User user);
