@@ -24,7 +24,7 @@ public class FilmService {
     private final Validation validation;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-    private int filmId = 0;
+    private Long filmId = 0L;
 
     @Autowired
     public FilmService(Validation validation, InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
@@ -51,66 +51,43 @@ public class FilmService {
         return filmStorage.create(film);
     }
 
-    public Film update(Film film) {
+    public Film update(Film filmUp) {
         log.debug("Получен запрос PUT /films.");
-        Map<Integer, Film> actualFilms = filmStorage.getFilms();
-        if (!actualFilms.containsKey(film.getId())) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        validateFilm(film);
-        return filmStorage.update(film);
+        Film film = filmStorage.getFilmById(filmUp.getId());
+        validateFilm(filmUp);
+        return filmStorage.update(filmUp);
     }
 
-    public void delete(Integer id) {
+    public void delete(long id) {
         log.debug("Получен запрос DELETE /films/{id}.");
-        Map<Integer, Film> actualFilms = filmStorage.getFilms();
-        if (!actualFilms.containsKey(id)) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        Film film = actualFilms.get(id);
+        Film film = filmStorage.getFilmById(id);
         validateFilm(film);
         filmStorage.delete(film);
     }
 
-    public void addLike(int id, int userId) {
+    public void addLike(long id, long userId) {
         log.debug("Получен запрос PUT /films/{id}/like/{userId}.");
-        Map<Integer, Film> actualFilms = filmStorage.getFilms();
-        Map<Integer, User> actualUsers = userStorage.getUsers();
-        if (!actualFilms.containsKey(id)) {
-            throw new DataNotFoundException("Нет такого id - фильма");
-        }
-        if (!actualUsers.containsKey(userId)) {
-            throw new DataNotFoundException("Нет такого id - пользователя");
-        }
-        Film film = actualFilms.get(id);
+        Film film = filmStorage.getFilmById(id);
+        User user = userStorage.getUserById(userId);
         film.addLike(userId);
     }
 
-    public void deleteLike(int id, int userId) {
+    public void deleteLike(long id, long userId) {
         log.debug("Получен запрос DELETE /films/{id}/like/{userId}.");
-        Map<Integer, Film> actualFilms = filmStorage.getFilms();
-        Map<Integer, User> actualUsers = userStorage.getUsers();
-        if (!actualFilms.containsKey(id) || !actualUsers.containsKey(userId)) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        Film film = actualFilms.get(id);
+        Film film = filmStorage.getFilmById(id);
+        User user = userStorage.getUserById(userId);
         film.removeLike(userId);
     }
 
     public List<Film> getPopularFilms(int count) {
-
-        return new ArrayList<>(filmStorage.getFilms().values()).stream()
+        return filmStorage.getFilms().values().stream()
                 .sorted(Comparator.comparing(Film::getRate).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
     }
 
-    public Film getFilmById(Integer id) {
+    public Film getFilm(long id) {
         log.debug("Получен запрос GET /films/{id}.");
-        Map<Integer, Film> actualFilms = filmStorage.getFilms();
-        if (!actualFilms.containsKey(id)) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        return actualFilms.get(id);
+        return filmStorage.getFilmById(id);
     }
 }

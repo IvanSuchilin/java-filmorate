@@ -14,23 +14,23 @@ import java.util.Set;
 @Builder
 public class Film {
 
-    private  int id;
+    private Long id;
     private String name;
     private LocalDate releaseDate;
     private String description;
     private long duration;
 
     @JsonIgnore
-    private Set<Integer> userId = new HashSet<>();
+    private Set<Long> userId = new HashSet<>();
     @JsonIgnore
     private long rate = 0;
 
-    public void addLike(Integer id){
+    public void addLike(long id){
         userId.add(id);
         rate = userId.size();
     }
 
-    public void removeLike(Integer id){
+    public void removeLike(long id){
         userId.remove(id);
         rate = userId.size();
     }

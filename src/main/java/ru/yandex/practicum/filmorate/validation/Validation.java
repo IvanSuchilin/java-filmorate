@@ -46,7 +46,7 @@ public class Validation {
             throw new ValidationException(HttpStatus.BAD_REQUEST, "Логин не может быть пустым и содержать пробелы");
         }
         if (user.getName() == null || user.getName().isBlank()) {
-            log.error("Имя пользователя путо - используется логин в качестве имени");
+            log.error("Имя пользователя пусто - используется логин в качестве имени");
             user.setName(user.getLogin());
         }
     }

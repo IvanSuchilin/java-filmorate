@@ -20,7 +20,7 @@ public class UserService {
 
     private final Validation validation;
     private final UserStorage userStorage;
-    private int userId = 0;
+    private long userId = 0;
 
     @Autowired
     public UserService(Validation validation, InMemoryUserStorage userStorage) {
@@ -47,7 +47,7 @@ public class UserService {
     }
 
     public User update(User user) {
-        Map<Integer, User> actualUsers = userStorage.getUsers();
+        Map<Long, User> actualUsers = userStorage.getUsers();
         if (!actualUsers.containsKey(user.getId())) {
             throw new DataNotFoundException("Нет такого id");
         }
@@ -56,85 +56,68 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    public void delete(Integer id) {
+    public void delete(long id) {
         log.debug("Получен запрос DELETE /users/{id}.");
-        Map<Integer, User> actualUsers = userStorage.getUsers();
-        if (!actualUsers.containsKey(id)) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        User user = actualUsers.get(id);
+        User user = userStorage.getUserById(id);
         validateUser(user);
         userStorage.delete(user);
     }
 
-    public void addFriend(int id, int friendId) {
+    public void addFriend(long id, long friendId) {
         log.debug("Получен запрос PUT /users/{id}/friends/{friendId}.");
-        Map<Integer, User> actualUsers = userStorage.getUsers();
-        if (!actualUsers.containsKey(id) || !actualUsers.containsKey(friendId)) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        userStorage.getUsers().get(id).getFriendsId().add(friendId);
-        userStorage.getUsers().get(friendId).getFriendsId().add(id);
-        log.debug("Пользователи {} и {} теперь друзья", actualUsers.get(id).getName(),
-                actualUsers.get(friendId).getName());
+        User firstFriend = userStorage.getUserById(id);
+        User secondFriend = userStorage.getUserById(friendId);
+        firstFriend.getFriendsId().add(friendId);
+        secondFriend.getFriendsId().add(id);
+        log.debug("Пользователи {} и {} теперь друзья", firstFriend.getName(),
+                secondFriend.getName());
     }
 
-    public void deleteFriend(int id, int friendId) {
+    public void deleteFriend(long id, long friendId) {
         log.debug("Получен запрос DELETE /users/{id}/friends/{friendId}.");
-        Map<Integer, User> actualUsers = userStorage.getUsers();
-        if (!actualUsers.containsKey(id) || !actualUsers.containsKey(friendId)) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        for (int i = 0; i < actualUsers.get(id).getFriendsId().size(); i++) {
-            if (actualUsers.get(id).getFriendsId().get(i) == friendId) {
-                actualUsers.get(id).getFriendsId().remove(i);
+        User firstFriend = userStorage.getUserById(id);
+        User secondFriend = userStorage.getUserById(friendId);
+        for (int i = 0; i < firstFriend.getFriendsId().size(); i++) {
+            if (firstFriend.getFriendsId().get(i) == friendId) {
+                firstFriend.getFriendsId().remove(i);
             }
         }
-        for (int i = 0; i < actualUsers.get(friendId).getFriendsId().size(); i++) {
-            if (actualUsers.get(friendId).getFriendsId().get(i) == id) {
-                actualUsers.get(friendId).getFriendsId().remove(i);
+        for (int i = 0; i < secondFriend.getFriendsId().size(); i++) {
+            if (secondFriend.getFriendsId().get(i) == id) {
+                secondFriend.getFriendsId().remove(i);
             }
         }
-        log.debug("Пользователи {} и {} теперь не друзья", actualUsers.get(id).getName(),
-                actualUsers.get(friendId).getName());
+        log.debug("Пользователи {} и {} теперь не друзья", firstFriend.getName(),
+                secondFriend.getName());
     }
 
-    public List<User> getCommonFriend(int id, int otherId) {
-        log.debug("Получен запрос GET /users/{id}/friends/common/{otherId}.");
-        Map<Integer, User> actualUsers = userStorage.getUsers();
-        if (!actualUsers.containsKey(id) || !actualUsers.containsKey(otherId)) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        List<Integer> firstFriendsList = actualUsers.get(id).getFriendsId();
-        List<Integer> secondFriendsList = actualUsers.get(otherId).getFriendsId();
-        log.debug("Получен список общих друзей пользователей {} и {}", actualUsers.get(id).getName(),
-                actualUsers.get(otherId).getName());
+    public List<User> getCommonFriend(long id, long otherId) {
+        Map<Long, User> actualUsers = userStorage.getUsers();
+        User firstFriend = userStorage.getUserById(id);
+        User secondFriend = userStorage.getUserById(otherId);
+        List<Long> firstFriendsList = firstFriend.getFriendsId();
+        List<Long> secondFriendsList = secondFriend.getFriendsId();
+        log.debug("Получен список общих друзей пользователей {} и {}", firstFriend.getName(),
+                secondFriend.getName());
         if (firstFriendsList.isEmpty() || secondFriendsList.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Integer> commonIdList = firstFriendsList.stream().filter(secondFriendsList::contains)
+        List<Long> commonIdList = firstFriendsList.stream().filter(secondFriendsList::contains)
                 .collect(Collectors.toList());
         return commonIdList.stream().map(actualUsers::get).collect(Collectors.toList());
     }
 
-    public User getUserById(Integer id) {
+    public User getUser(Long id) {
         log.debug("Получен запрос GET /users/{id}");
-        Map<Integer, User> actualUsers = userStorage.getUsers();
-        if (!actualUsers.containsKey(id)) {
-            throw new DataNotFoundException("Нет такого id");
-        }
-        return actualUsers.get(id);
+        return userStorage.getUserById(id);
     }
 
-    public List<User> getFriendsList(int id) {
-        log.debug("\"Получен запрос GET /users/{id}/friends");
-        Map<Integer, User> actualUsers = userStorage.getUsers();
-        log.debug("Получен список друзей пользователя {}", actualUsers.get(id).getName());
-        List<User> userList = new ArrayList<>();
-        for (int idUser : actualUsers.get(id).getFriendsId()) {
-            userList.add(actualUsers.get(idUser));
-        }
-        return userList;
+    public List<User> getFriendsList(long id) {
+        log.debug("Получен запрос GET /users/{id}/friends");
+        User user = userStorage.getUserById(id);
+        Map<Long, User> actualUsers = userStorage.getUsers();
+        log.debug("Получен список друзей пользователя {}", user.getName());
+        return user.getFriendsId().stream().map(actualUsers::get).collect(Collectors.toList());
     }
 }
 

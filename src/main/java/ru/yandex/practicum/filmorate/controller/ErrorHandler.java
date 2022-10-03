@@ -26,11 +26,4 @@ public class ErrorHandler {
         log.info("400 {}", e.getReason());
         return new ErrorResponse(e.getReason());
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(final Throwable e) {
-        log.info("500 {}", e.getMessage(), e);
-        return new ErrorResponse(e.getMessage());
-    }
 }

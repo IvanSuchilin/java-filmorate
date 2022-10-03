@@ -4,11 +4,13 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.Map;
 
 public interface FilmStorage {
-    Map<Integer,Film> getFilms();
+    Map<Long,Film> getFilms();
 
     Film create(Film film);
 
     Film update(Film film);
 
     void delete(Film film);
+
+    Film getFilmById(long id);
 }

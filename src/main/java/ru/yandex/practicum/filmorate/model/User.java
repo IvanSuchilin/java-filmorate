@@ -14,11 +14,11 @@ import java.util.List;
 @Builder
 public class User {
 
-    private Integer id;
+    private Long id;
     private String email;
     private String login;
     private String name;
     private LocalDate birthday;
     @JsonIgnore
-    private List<Integer> friendsId = new ArrayList<>();
+    private List<Long> friendsId = new ArrayList<>();
 }
