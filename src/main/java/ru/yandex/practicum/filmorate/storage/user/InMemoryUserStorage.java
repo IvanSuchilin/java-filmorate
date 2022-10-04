@@ -46,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-     public User getUserById(long id){
+    public User getUserById(long id) {
         Map<Long, User> actualUsers = getUsers();
         if (!actualUsers.containsKey(id)) {
             throw new DataNotFoundException("Нет такого id - пользователя");

@@ -77,18 +77,14 @@ public class UserService {
         log.debug("Получен запрос DELETE /users/{id}/friends/{friendId}.");
         User firstFriend = userStorage.getUserById(id);
         User secondFriend = userStorage.getUserById(friendId);
-        for (int i = 0; i < firstFriend.getFriendsId().size(); i++) {
-            if (firstFriend.getFriendsId().get(i) == friendId) {
-                firstFriend.getFriendsId().remove(i);
-            }
+        if (firstFriend.getFriendsId().contains(friendId)) {
+            firstFriend.getFriendsId().remove(friendId);
         }
-        for (int i = 0; i < secondFriend.getFriendsId().size(); i++) {
-            if (secondFriend.getFriendsId().get(i) == id) {
-                secondFriend.getFriendsId().remove(i);
-            }
+        if (secondFriend.getFriendsId().contains(friendId)) {
+            secondFriend.getFriendsId().remove(id);
+            log.debug("Пользователи {} и {} теперь не друзья", firstFriend.getName(),
+                    secondFriend.getName());
         }
-        log.debug("Пользователи {} и {} теперь не друзья", firstFriend.getName(),
-                secondFriend.getName());
     }
 
     public List<User> getCommonFriend(long id, long otherId) {

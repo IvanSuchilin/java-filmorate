@@ -43,7 +43,6 @@ public class FilmController {
     public Film getFilmById(@PathVariable("id") Integer id) {
         return filmService.getFilm(id);
     }
-
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         filmService.addLike(id, userId);
