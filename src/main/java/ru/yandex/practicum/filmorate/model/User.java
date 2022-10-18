@@ -1,17 +1,24 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Builder;
-import lombok.Data;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
+@ToString(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class User {
 
-    private int id;
+    private Long id;
     private String email;
     private String login;
-    private  String name;
+    private String name;
     private LocalDate birthday;
+    @JsonIgnore
+    private List<Long> friendsId = new ArrayList<>();
 }

@@ -126,7 +126,7 @@ class ValidationTest {
     private Film createFilm(String name, String description, LocalDate date, long duration) {
         return Film.builder()
                 .name(name)
-                .id(1)
+                .id(1L)
                 .description(description)
                 .releaseDate(date)
                 .duration(duration)
@@ -135,7 +135,7 @@ class ValidationTest {
 
     private User createUser(String mail, String login, String name, LocalDate birthday) {
         return User.builder()
-                .id(1)
+                .id(1L)
                 .email(mail)
                 .login(login)
                 .name(name)
