@@ -18,7 +18,7 @@ public class FilmController {
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
-
+/*
     @GetMapping
     public List<Film> findAll() {
         return filmService.findAll();
@@ -56,5 +56,5 @@ public class FilmController {
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getPopularFilms(count);
-    }
+    }*/
 }

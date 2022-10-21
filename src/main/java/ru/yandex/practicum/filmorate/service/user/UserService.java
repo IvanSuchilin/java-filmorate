@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.validation.Validation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -19,20 +20,20 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final Validation validation;
-    private final UserStorage userStorage;
+    private final UserStorage userDbStorage;
     private long userId = 0;
 
     @Autowired
-    public UserService(Validation validation, InMemoryUserStorage userStorage) {
+    public UserService(Validation validation, InMemoryUserStorage userDbStorage) {
         this.validation = validation;
-        this.userStorage = userStorage;
+        this.userDbStorage = userDbStorage;
     }
 
     public void validateUser(User user) {
         validation.validateUser(user);
     }
 
-    public List<User> findAll() {
+   /* public List<User> findAll() {
         log.debug("Получен запрос GET /users.");
         log.debug("Текущее количество пользователей: {}", userStorage.getUsers().size());
         return new ArrayList<>(userStorage.getUsers().values());
@@ -101,19 +102,19 @@ public class UserService {
         List<Long> commonIdList = firstFriendsList.stream().filter(secondFriendsList::contains)
                 .collect(Collectors.toList());
         return commonIdList.stream().map(actualUsers::get).collect(Collectors.toList());
-    }
+    }*/
 
-    public User getUser(Long id) {
+    public Optional<User> getUser(Long id) {
         log.debug("Получен запрос GET /users/{id}");
-        return userStorage.getUserById(id);
+        return userDbStorage.getUserById(id);
     }
 
-    public List<User> getFriendsList(long id) {
+   /* public List<User> getFriendsList(long id) {
         log.debug("Получен запрос GET /users/{id}/friends");
         User user = userStorage.getUserById(id);
         Map<Long, User> actualUsers = userStorage.getUsers();
         log.debug("Получен список друзей пользователя {}", user.getName());
         return user.getFriendsId().stream().map(actualUsers::get).collect(Collectors.toList());
-    }
+    }*/
 }
 

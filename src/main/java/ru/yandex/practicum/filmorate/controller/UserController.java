@@ -20,7 +20,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
+    @GetMapping("/users/{id}")
+    public Optional<User> get(@PathVariable("id") Long id) {
+        return userService.getUser(id);
+    }
+
+    /*@GetMapping("/users")
     public Collection<User> findAll() {
         return userService.findAll();
     }
@@ -64,5 +69,5 @@ public class UserController {
     public List<User> getCommonFriendsList(@PathVariable("id") Long id, @PathVariable("otherId") Long otherId) {
         log.debug("Получен запрос GET /users/{id}/friends/common/{otherId}.");
         return userService.getCommonFriend(id, otherId);
-    }
+    }*/
 }

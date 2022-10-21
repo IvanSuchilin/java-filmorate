@@ -19,6 +19,7 @@ public class Film {
     private LocalDate releaseDate;
     private String description;
     private long duration;
+    private String mpa;
 
     @JsonIgnore
     private Set<Long> userId = new HashSet<>();

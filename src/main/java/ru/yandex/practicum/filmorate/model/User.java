@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+/*public class User {
 
     private Long id;
     private String email;
@@ -21,4 +21,12 @@ public class User {
     private LocalDate birthday;
     @JsonIgnore
     private List<Long> friendsId = new ArrayList<>();
+}*/
+public class User {
+
+    private Long id;
+    private String email;
+    private String login;
+    private String name;
+    private LocalDate birthday;
 }

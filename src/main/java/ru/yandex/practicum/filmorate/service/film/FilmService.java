@@ -37,7 +37,7 @@ public class FilmService {
         validation.validateFilm(film);
     }
 
-    public List<Film> findAll() {
+   /* public List<Film> findAll() {
         log.debug("Получен запрос GET /films.");
         log.debug("Текущее количество фильмов: {}", filmStorage.getFilms().size());
         return new ArrayList<>(filmStorage.getFilms().values());
@@ -89,5 +89,5 @@ public class FilmService {
     public Film getFilm(long id) {
         log.debug("Получен запрос GET /films/{id}.");
         return filmStorage.getFilmById(id);
-    }
+    }*/
 }
