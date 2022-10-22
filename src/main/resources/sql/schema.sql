@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS MPA CASCADE;
 
 create table CLIENTS
 (
-    CLIENT_ID    INTEGER auto_increment
+    CLIENT_ID    INTEGER               not null
         primary key,
     CLIENT_EMAIL CHARACTER VARYING(50) not null,
     LOGIN        CHARACTER VARYING(50) not null,

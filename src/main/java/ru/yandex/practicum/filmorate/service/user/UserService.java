@@ -2,10 +2,12 @@ package ru.yandex.practicum.filmorate.service.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
@@ -20,17 +22,42 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final Validation validation;
-    private final UserStorage userDbStorage;
+    private final UserStorage userStorage;
     private long userId = 0;
 
     @Autowired
-    public UserService(Validation validation, InMemoryUserStorage userDbStorage) {
+    public UserService(Validation validation,@Qualifier("UserDbStorage")  UserStorage userDbStorage) {
         this.validation = validation;
-        this.userDbStorage = userDbStorage;
+        this.userStorage = userDbStorage;
     }
 
+
+    public User create(User user) {
+        log.debug("Получен запрос POST /users.");
+        validateUser(user);
+        userId++;
+        user.setId(userId);
+        return userStorage.create(user);
+    }
     public void validateUser(User user) {
         validation.validateUser(user);
+    }
+
+    public User update(User user) {
+        /*Map<Long, User> actualUsers = userStorage.getUsers();
+        if (!actualUsers.containsKey(user.getId())) {
+            throw new DataNotFoundException("Нет такого id");
+        }*/
+        validateUser(user);
+        log.debug("Получен запрос PUT /users.");
+        return userStorage.update(user);
+    }
+
+    public void delete(long id) {
+        log.debug("Получен запрос DELETE /users/{id}.");
+        /*Optional user = userStorage.getUserById(id);
+        validateUser( user);*/
+        userStorage.delete(id);
     }
 
    /* public List<User> findAll() {
@@ -106,7 +133,7 @@ public class UserService {
 
     public Optional<User> getUser(Long id) {
         log.debug("Получен запрос GET /users/{id}");
-        return userDbStorage.getUserById(id);
+        return userStorage.getUserById(id);
     }
 
    /* public List<User> getFriendsList(long id) {

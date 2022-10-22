@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@Component
+@Component("UserDbStorage")
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -25,17 +25,37 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        return null;
+        String sqlQuery = "insert into CLIENTS(CLIENT_ID, CLIENT_EMAIL, LOGIN, CLIENT_NAME, BIRTHDAY) " +
+                "values (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery,
+                user.getId(),
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday());
+        return user;
     }
+
 
     @Override
     public User update(User user) {
-        return null;
+        String sqlQuery = "update CLIENTS set " +
+                "CLIENT_EMAIL = ?, LOGIN = ?, CLIENT_NAME = ?, BIRTHDAY = ?" +
+                "where CLIENT_ID = ?";
+        jdbcTemplate.update(sqlQuery,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday(),
+        user.getId());
+        return user;
     }
 
     @Override
-    public void delete(User user) {
-
+    public void delete(Long id) {
+        //Long id = user.getId();
+        String sqlQuery = "delete from CLIENTS where CLIENT_ID = ?";
+        jdbcTemplate.update(sqlQuery, id);
     }
 
     @Override
@@ -45,7 +65,7 @@ public class UserDbStorage implements UserStorage {
             User user = new User(
                     userRows.getLong("CLIENT_ID"),
                     userRows.getString("CLIENT_EMAIL"),
-                    userRows.getString("CLIENT_LOGIN"),
+                    userRows.getString("LOGIN"),
                     userRows.getString("CLIENT_NAME"),
                     userRows.getDate("BIRTHDAY").toLocalDate()
             );

@@ -25,6 +25,20 @@ public class UserController {
         return userService.getUser(id);
     }
 
+    @PostMapping("/users")
+    public User create(@RequestBody User user) {
+        return userService.create(user);
+    }
+
+    @PutMapping("/users")
+    public User put(@RequestBody User user) {
+        return userService.update(user);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public void delete(@PathVariable("id") Long id) {
+        userService.delete(id);
+    }
     /*@GetMapping("/users")
     public Collection<User> findAll() {
         return userService.findAll();
