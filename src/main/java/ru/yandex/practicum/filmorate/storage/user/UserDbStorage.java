@@ -6,6 +6,8 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,9 +20,27 @@ public class UserDbStorage implements UserStorage {
     public UserDbStorage(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate=jdbcTemplate;
     }
+
     @Override
     public Map<Long, User> getUsers() {
         return null;
+    } //ДОРАБОТАТЬ
+
+    public List<User> getAllUsers() {
+
+            String sql = "SELECT * FROM CLIENTS";
+
+        return jdbcTemplate.query(
+                    sql,
+                    (rs, rowNum) ->
+                            new User(
+                                    rs.getLong("CLIENT_ID"),
+                                    rs.getString("CLIENT_EMAIL"),
+                                    rs.getString("LOGIN"),
+                                    rs.getString("CLIENT_NAME"),
+                                    rs.getDate("BIRTHDAY").toLocalDate()
+                            )
+            );
     }
 
     @Override

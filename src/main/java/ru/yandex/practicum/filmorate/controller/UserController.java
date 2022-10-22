@@ -39,6 +39,11 @@ public class UserController {
     public void delete(@PathVariable("id") Long id) {
         userService.delete(id);
     }
+
+    @GetMapping("/users")
+    public Collection<User> findAll() {
+        return userService.findAll();
+    }
     /*@GetMapping("/users")
     public Collection<User> findAll() {
         return userService.findAll();

@@ -4,18 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -60,6 +53,12 @@ public class UserService {
         userStorage.delete(id);
     }
 
+
+    public Collection<User> findAll() {
+      //  log.debug("Получен запрос GET /users.");
+       // log.debug("Текущее количество пользователей: {}", userStorage.getUsers().size());
+        return userStorage.getAllUsers();
+    }
    /* public List<User> findAll() {
         log.debug("Получен запрос GET /users.");
         log.debug("Текущее количество пользователей: {}", userStorage.getUsers().size());
