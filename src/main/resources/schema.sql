@@ -1,9 +1,3 @@
-create
-user sa;
-alter
-user sa password 'password ';
-create
-database filmorate with owner sa;
 
 DROP TABLE IF EXISTS CLIENTS CASCADE;
 DROP TABLE IF EXISTS FRIENDSHIP CASCADE;
@@ -35,6 +29,12 @@ create table FRIENDSHIP
         foreign key (FRIEND1_ID) references CLIENTS
 );
 
+create table MPA
+(
+    MPA_ID   INTEGER               not null
+        primary key,
+    MPA_INFO CHARACTER VARYING(50) not null
+);
 create table FILMS
 (
     FILM_ID      INTEGER auto_increment
@@ -79,11 +79,5 @@ create table LIKES
         foreign key (FILM_ID) references FILMS
 );
 
-create table MPA
-(
-    MPA_ID   INTEGER               not null
-        primary key,
-    MPA_INFO CHARACTER VARYING(50) not null
-);
 
 
