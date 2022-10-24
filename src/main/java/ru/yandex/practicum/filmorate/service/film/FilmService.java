@@ -3,38 +3,56 @@ package ru.yandex.practicum.filmorate.service.film;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class FilmService {
     private final Validation validation;
     private final FilmStorage filmDbStorage;
-    private final UserStorage userStorage;
+    private final UserStorage userDbStorage;
     private Long filmId = 0L;
 
     @Autowired
-    public FilmService(Validation validation, FilmStorage filmDbStorage, UserStorage userStorage) {
+    public FilmService(Validation validation, FilmStorage filmDbStorage, UserStorage userDbStorage) {
         this.validation = validation;
         this.filmDbStorage = filmDbStorage;
-        this.userStorage = userStorage;
+        this.userDbStorage = userDbStorage;
     }
 
     public void validateFilm(Film film) {
         validation.validateFilm(film);
     }
-
-   /* public Film create(Film film) {
+    public Film create(Film film) {
         log.debug("Получен запрос POST /films.");
         validateFilm(film);
         filmId++;
         film.setId(filmId);
         return filmDbStorage.create(film);
-    }*/
+    }
+        public Film update(Film filmUp) {
+            log.debug("Получен запрос PUT /films.");
+           // Film film = filmDbStorage.getFilmById(filmUp.getId());
+           // validateFilm(filmUp);
+            return filmDbStorage.update(filmUp);
+        }
+
+    public Optional<Film> getFilm(long id) {
+        log.debug("Получен запрос GET /films/{id}.");
+        if (filmDbStorage.getFilmById(id).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id");
+        }
+        return filmDbStorage.getFilmById(id);
+    }
+    }
+
+
 
    /* public List<Film> findAll() {
         log.debug("Получен запрос GET /films.");
@@ -89,4 +107,4 @@ public class FilmService {
         log.debug("Получен запрос GET /films/{id}.");
         return filmStorage.getFilmById(id);
     }*/
-}
+

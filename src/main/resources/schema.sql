@@ -38,12 +38,12 @@ create table MPA
 );
 create table FILMS
 (
-    FILM_ID      INTEGER auto_increment
+    FILM_ID      INTEGER not null
         primary key,
-    DURATION     BIGINT,
-    DESCRIPTION  CHARACTER VARYING(200) not null,
     FILM_NAME    CHARACTER VARYING(50)  not null,
     RELEASE_DATE DATE                   not null,
+    DESCRIPTION  CHARACTER VARYING(200) not null,
+    DURATION     BIGINT,
     MPA_ID       INTEGER                not null,
     constraint FILMS_MPA_FK
         foreign key (MPA_ID) references MPA
