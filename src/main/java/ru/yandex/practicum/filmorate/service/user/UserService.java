@@ -75,7 +75,6 @@ public class UserService {
         if (userDbStorage.getUserById(id).isEmpty()) {
             throw new DataNotFoundException("Нет такого id");
         }
-        ;
         return userDbStorage.getUserById(id);
     }
 

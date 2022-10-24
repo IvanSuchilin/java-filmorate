@@ -12,12 +12,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmService filmService;
+    /*private final FilmService filmService;
 
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
+    }*/
+
+   /* @PostMapping
+    public Film create(@RequestBody Film film) {
+        return filmService.create(film);
     }
+*/
 /*
     @GetMapping
     public List<Film> findAll() {

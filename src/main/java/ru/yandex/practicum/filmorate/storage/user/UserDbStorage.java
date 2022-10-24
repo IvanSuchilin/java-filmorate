@@ -64,7 +64,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void delete(Long id) {
-        //Long id = user.getId();
         String sqlQuery = "delete from CLIENTS where CLIENT_ID = ?";
         jdbcTemplate.update(sqlQuery, id);
     }
@@ -72,7 +71,6 @@ public class UserDbStorage implements UserStorage {
     @Override
     public Optional<User> getUserById(long id) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from CLIENTS where CLIENT_ID = ?", id);
-
         if (userRows.next()) {
             User user = new User(
                     userRows.getLong("CLIENT_ID"),

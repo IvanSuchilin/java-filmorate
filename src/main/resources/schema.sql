@@ -27,6 +27,7 @@ create table FRIENDSHIP
         foreign key (FRIEND2_ID) references CLIENTS,
     constraint FRIENDSHIP_CLIENTS_FK
         foreign key (FRIEND1_ID) references CLIENTS
+
 );
 
 create table MPA

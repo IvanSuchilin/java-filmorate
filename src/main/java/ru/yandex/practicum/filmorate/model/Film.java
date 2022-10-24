@@ -22,11 +22,13 @@ public class Film {
     private String mpa;
 
     @JsonIgnore
-    private Set<Long> userId = new HashSet<>();
+    private Set<Like> likes = new HashSet<>();
+    @JsonIgnore
+    private Set<Genre> genres = new HashSet<>();
     @JsonIgnore
     private long rate = 0;
 
-    public void addLike(long id){
+    /*public void addLike(long id){
         userId.add(id);
         rate = userId.size();
     }
@@ -34,5 +36,5 @@ public class Film {
     public void removeLike(long id){
         userId.remove(id);
         rate = userId.size();
-    }
+    }*/
 }

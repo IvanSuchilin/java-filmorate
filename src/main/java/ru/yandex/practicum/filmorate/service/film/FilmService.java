@@ -13,20 +13,28 @@ import ru.yandex.practicum.filmorate.validation.Validation;
 @Service
 public class FilmService {
     private final Validation validation;
-    private final FilmStorage filmStorage;
+    private final FilmStorage filmDbStorage;
     private final UserStorage userStorage;
     private Long filmId = 0L;
 
     @Autowired
-    public FilmService(Validation validation, InMemoryFilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(Validation validation, FilmStorage filmDbStorage, UserStorage userStorage) {
         this.validation = validation;
-        this.filmStorage = filmStorage;
+        this.filmDbStorage = filmDbStorage;
         this.userStorage = userStorage;
     }
 
     public void validateFilm(Film film) {
         validation.validateFilm(film);
     }
+
+   /* public Film create(Film film) {
+        log.debug("Получен запрос POST /films.");
+        validateFilm(film);
+        filmId++;
+        film.setId(filmId);
+        return filmDbStorage.create(film);
+    }*/
 
    /* public List<Film> findAll() {
         log.debug("Получен запрос GET /films.");
