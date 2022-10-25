@@ -20,5 +20,14 @@ import lombok.*;
             Genre genre = (Genre) o;
             return id.equals(genre.id) && name.equals(genre.name);
         }
+
+        public int compareTo(Film o) {
+            Integer id = getId();
+            if (id < o.getId()) {
+                return -1;
+            } else if (id > o.getId()) {
+                return 1;
+            } else return 0;
+        }
     }
 

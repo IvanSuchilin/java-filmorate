@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -38,8 +39,9 @@ public class FilmService {
     }
         public Film update(Film filmUp) {
             log.debug("Получен запрос PUT /films.");
-           // Film film = filmDbStorage.getFilmById(filmUp.getId());
-           // validateFilm(filmUp);
+            if (filmDbStorage.getFilmById(filmUp.getId()).isEmpty()) {
+                throw new DataNotFoundException("Нет такого id");
+            }
             return filmDbStorage.update(filmUp);
         }
 
@@ -50,7 +52,27 @@ public class FilmService {
         }
         return filmDbStorage.getFilmById(id);
     }
+
+    public void addLike(long id, long userId) {
+        log.debug("Получен запрос PUT/films/{id}/like/{userId}.");
+        filmDbStorage.addLike(id, userId);
     }
+
+    public void deleteLike(int id, int userId) {
+        log.debug("Получен запрос DELETE/films/{id}/like/{userId}.");
+        if (userDbStorage.getUserById(userId).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id - пользователя");
+        }
+        filmDbStorage.removeLike(id, userId);
+    }
+
+    public List<Film> getPopularFilms(int count) {
+        return filmDbStorage.getPopularFilms().getFilms().values().stream()
+                .sorted(Comparator.comparing(Film::getRate).reversed())
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+}
 
 
 
@@ -60,40 +82,11 @@ public class FilmService {
         return new ArrayList<>(filmStorage.getFilms().values());
     }
 
-    public Film create(Film film) {
-        log.debug("Получен запрос POST /films.");
-        validateFilm(film);
-        filmId++;
-        film.setId(filmId);
-        return filmStorage.create(film);
-    }
-
-    public Film update(Film filmUp) {
-        log.debug("Получен запрос PUT /films.");
-        Film film = filmStorage.getFilmById(filmUp.getId());
-        validateFilm(filmUp);
-        return filmStorage.update(filmUp);
-    }
-
     public void delete(long id) {
         log.debug("Получен запрос DELETE /films/{id}.");
         Film film = filmStorage.getFilmById(id);
         validateFilm(film);
         filmStorage.delete(film);
-    }
-
-    public void addLike(long id, long userId) {
-        log.debug("Получен запрос PUT /films/{id}/like/{userId}.");
-        Film film = filmStorage.getFilmById(id);
-        User user = userStorage.getUserById(userId);
-        film.addLike(userId);
-    }
-
-    public void deleteLike(long id, long userId) {
-        log.debug("Получен запрос DELETE /films/{id}/like/{userId}.");
-        Film film = filmStorage.getFilmById(id);
-        User user = userStorage.getUserById(userId);
-        film.removeLike(userId);
     }
 
     public List<Film> getPopularFilms(int count) {
@@ -102,9 +95,5 @@ public class FilmService {
                 .limit(count)
                 .collect(Collectors.toList());
     }
-
-    public Film getFilm(long id) {
-        log.debug("Получен запрос GET /films/{id}.");
-        return filmStorage.getFilmById(id);
-    }*/
+*/
 

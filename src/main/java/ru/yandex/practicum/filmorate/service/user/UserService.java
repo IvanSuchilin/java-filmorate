@@ -45,7 +45,6 @@ public class UserService {
         if (userDbStorage.getUserById(user.getId()).isEmpty()) {
             throw new DataNotFoundException("Нет такого id");
         }
-        ;
         return userDbStorage.update(user);
     }
 
