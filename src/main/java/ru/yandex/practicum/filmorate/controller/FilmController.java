@@ -26,7 +26,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film put(@RequestBody Film film) {
+    public Optional<Film> put(@RequestBody Film film) {
         return filmService.update(film);
     }
 
@@ -45,10 +45,10 @@ public class FilmController {
         filmService.deleteLike(id, userId);
     }
 
-    @GetMapping("/popular")
+   /* @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getPopularFilms(count);
-    }
+    }*/
 }
 
 /*

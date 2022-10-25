@@ -26,7 +26,8 @@ public class Film {
 
    // private Set<Genre> genres = new HashSet<>();
     //private Set<Genre> genres = new TreeSet<>(Comparator.comparingInt(Genre::getId));
-   private Set<Genre> genres = new LinkedHashSet<>();
+  // private Set<Genre> genres = new LinkedHashSet<>();
+    private List <Genre> genres = new ArrayList<>();
     @JsonIgnore
     private long rate = 0;
 

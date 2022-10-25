@@ -30,6 +30,7 @@ public class FilmService {
     public void validateFilm(Film film) {
         validation.validateFilm(film);
     }
+
     public Film create(Film film) {
         log.debug("Получен запрос POST /films.");
         validateFilm(film);
@@ -37,13 +38,14 @@ public class FilmService {
         film.setId(filmId);
         return filmDbStorage.create(film);
     }
-        public Film update(Film filmUp) {
-            log.debug("Получен запрос PUT /films.");
-            if (filmDbStorage.getFilmById(filmUp.getId()).isEmpty()) {
-                throw new DataNotFoundException("Нет такого id");
-            }
-            return filmDbStorage.update(filmUp);
+
+    public Optional<Film> update(Film filmUp) {
+        log.debug("Получен запрос PUT /films.");
+        if (filmDbStorage.getFilmById(filmUp.getId()).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id");
         }
+        return filmDbStorage.update(filmUp);
+    }
 
     public Optional<Film> getFilm(long id) {
         log.debug("Получен запрос GET /films/{id}.");
@@ -66,12 +68,13 @@ public class FilmService {
         filmDbStorage.removeLike(id, userId);
     }
 
-    public List<Film> getPopularFilms(int count) {
+   /* public List<Film> getPopularFilms(int count) {
         return filmDbStorage.getPopularFilms().getFilms().values().stream()
                 .sorted(Comparator.comparing(Film::getRate).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
     }
+    }*/
 }
 
 

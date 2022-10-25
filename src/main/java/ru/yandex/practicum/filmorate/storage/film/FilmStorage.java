@@ -11,7 +11,7 @@ public interface FilmStorage {
 
     Film create(Film film);
 
-    Film update(Film film);
+    Optional<Film> update(Film film);
 
     void delete(Film film);
 

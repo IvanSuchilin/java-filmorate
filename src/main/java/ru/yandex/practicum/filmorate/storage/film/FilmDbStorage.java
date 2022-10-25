@@ -51,8 +51,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film update(Film film) {
-        Set<Genre> genres = film.getGenres();
+    public Optional<Film> update(Film film) {
+        List<Genre> genres = film.getGenres().stream().distinct().collect(Collectors.toList());
         film.setGenres(genres);
         String sqlQuery = "UPDATE FILMS SET FILM_ID = ?, FILM_NAME = ?,  RELEASE_DATE =?, " +
                 "DESCRIPTION = ?, DURATION =?, MPA_ID=? WHERE FILM_ID = ?";
@@ -73,7 +73,7 @@ public class FilmDbStorage implements FilmStorage {
                     genre.getId(),
                     film.getId());
         }
-        return film;
+        return  getFilmById(film.getId());
     }
 
     @Override
@@ -94,7 +94,6 @@ public class FilmDbStorage implements FilmStorage {
                     filmRows.getLong("DURATION"),
                     new Mpa(filmRows.getInt("MPA_ID"),
                             filmRows.getString("MPA_INFO")));
-
             return Optional.of(addGenresToFilm(film));
         } else {
             log.info("Фильм с идентификатором {} не найден.", id);
@@ -102,7 +101,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    public Set<Genre> getGenresByFilmId(long id) {
+    public List<Genre> getGenresByFilmId(long id) {
         String sql = "SELECT  DISTINCT COMBI_FILMS_GENRES.GENRE_ID, GENRE_NAME FROM COMBI_FILMS_GENRES " +
                 "JOIN GENRES G2 on G2.GENRE_ID = COMBI_FILMS_GENRES.GENRE_ID\n" +
                 "                  WHERE COMBI_FILMS_GENRES.FILM_ID = ?" +
@@ -113,7 +112,7 @@ public class FilmDbStorage implements FilmStorage {
                         rs.getInt("GENRE_ID"),
                         rs.getString("GENRE_NAME")), id
         );
-        return new HashSet<>(genreList);
+        return genreList;
     }
 
     public Film addGenresToFilm(Film film) {
@@ -122,7 +121,7 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    public void addLike(int filmId, int userId){
+    public void addLike(long filmId, long userId){
         String sqlQuery = "INSERT INTO LIKES (CLIENT_ID, FILM_ID) " +
                 "values (?, ?)";
         jdbcTemplate.update(sqlQuery,
