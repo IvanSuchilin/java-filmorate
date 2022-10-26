@@ -26,32 +26,8 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "select * from FILMS F JOIN MPA M ON F.MPA_ID = M.MPA_ID";
         return jdbcTemplate.query(
                 sql,
-                (rs, rowNum) -> createFilm (rs));
+                (rs, rowNum) -> createFilm(rs));
     }
-
-    private Film createFilm (ResultSet rs) throws SQLException {
-        Film newFilm = new Film(
-                rs.getLong("FILM_ID"),
-                rs.getString("FILM_NAME"),
-                rs.getDate("RELEASE_DATE").toLocalDate(),
-                rs.getString("DESCRIPTION"),
-                rs.getLong("DURATION"),
-                new Mpa(rs.getInt("MPA_ID"),
-                        rs.getString("MPA_INFO")));
-        addGenreToFilm(newFilm);
-        addRateToFilm(newFilm);
-        return newFilm;
-    }
-
-    private void addRateToFilm(Film film) {
-        SqlRowSet likeRows = jdbcTemplate.queryForRowSet("Select COUNT(FILM_ID) AS FILM_LIKES FROM LIKES " +
-                "WHERE FILM_ID = ?", film.getId());
-        if (likeRows.next()) {
-            int likesCount = likeRows.getInt("FILM_LIKES");
-            film.setRate(likesCount);
-        }
-    }
-
 
     @Override
     public Film create(Film film) {
@@ -79,7 +55,6 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Optional<Film> update(Film film) {
         List<Genre> genres = film.getGenres().stream().distinct().collect(Collectors.toList());
-       // film.setGenres(genres);
         String sqlQuery = "UPDATE FILMS SET FILM_ID = ?, FILM_NAME = ?,  RELEASE_DATE =?, " +
                 "DESCRIPTION = ?, DURATION =?, MPA_ID=? WHERE FILM_ID = ?";
         jdbcTemplate.update(sqlQuery,
@@ -99,7 +74,7 @@ public class FilmDbStorage implements FilmStorage {
                     genre.getId(),
                     film.getId());
         }
-        return  getFilmById(film.getId());
+        return getFilmById(film.getId());
     }
 
     @Override
@@ -146,7 +121,7 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    public void addLike(long filmId, long userId){
+    public void addLike(long filmId, long userId) {
         String sqlQuery = "INSERT INTO LIKES (CLIENT_ID, FILM_ID) " +
                 "values (?, ?)";
         jdbcTemplate.update(sqlQuery,
@@ -155,16 +130,40 @@ public class FilmDbStorage implements FilmStorage {
         );
     }
 
-    public void removeLike(int filmId, int userId){
-    String sqlQuery = "delete from LIKES where CLIENT_ID = ? AND FILM_ID = ?";
+    public void removeLike(int filmId, int userId) {
+        String sqlQuery = "delete from LIKES where CLIENT_ID = ? AND FILM_ID = ?";
         jdbcTemplate.update(sqlQuery, userId, filmId);
-}
+    }
 
     @Override
     public List<Film> getPopularFilms(int count) {
-      return  getAllFilms().stream().sorted(Comparator.comparing(Film::getRate).reversed())
+        return getAllFilms().stream().sorted(Comparator.comparing(Film::getRate).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+
+    private Film createFilm(ResultSet rs) throws SQLException {
+        Film newFilm = new Film(
+                rs.getLong("FILM_ID"),
+                rs.getString("FILM_NAME"),
+                rs.getDate("RELEASE_DATE").toLocalDate(),
+                rs.getString("DESCRIPTION"),
+                rs.getLong("DURATION"),
+                new Mpa(rs.getInt("MPA_ID"),
+                        rs.getString("MPA_INFO")));
+        addGenreToFilm(newFilm);
+        addRateToFilm(newFilm);
+        return newFilm;
+    }
+
+    private void addRateToFilm(Film film) {
+        SqlRowSet likeRows = jdbcTemplate.queryForRowSet("Select COUNT(FILM_ID) AS FILM_LIKES FROM LIKES " +
+                "WHERE FILM_ID = ?", film.getId());
+        if (likeRows.next()) {
+            int likesCount = likeRows.getInt("FILM_LIKES");
+            film.setRate(likesCount);
+        }
     }
 }
 

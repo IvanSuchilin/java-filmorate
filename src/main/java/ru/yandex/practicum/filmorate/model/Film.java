@@ -2,9 +2,12 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,14 +23,9 @@ public class Film {
     private String description;
     private long duration;
     private Mpa mpa;
-
     @JsonIgnore
     private Set<Long> likes = new HashSet<>();
-
-   // private Set<Genre> genres = new HashSet<>();
-    //private Set<Genre> genres = new TreeSet<>(Comparator.comparingInt(Genre::getId));
-  // private Set<Genre> genres = new LinkedHashSet<>();
-    private List <Genre> genres = new ArrayList<>();
+    private List<Genre> genres = new ArrayList<>();
     @JsonIgnore
     private long rate = 0;
 
@@ -40,13 +38,4 @@ public class Film {
         this.mpa = mpa;
     }
 
-    public void addLike(long id){
-        likes.add(id);
-        setRate(likes.size());
-    }
-
-    public void removeLike(long id){
-        likes.remove(id);
-        setRate(likes.size());
-    }
 }

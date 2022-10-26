@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 
-import java.util.Objects;
-
 @Getter
 @Setter
 @ToString(callSuper = true)
