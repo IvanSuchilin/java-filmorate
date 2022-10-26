@@ -76,37 +76,15 @@ public class FilmService {
     public List<Film> getPopularFilms(int count) {
         return filmDbStorage.getPopularFilms(count);
     }
-}
-
-   /* public List<Film> getPopularFilms(int count) {
-        return filmDbStorage.getPopularFilms().getFilms().values().stream()
-                .sorted(Comparator.comparing(Film::getRate).reversed())
-                .limit(count)
-                .collect(Collectors.toList());
-    }
-    }*/
-
-
-
-
-   /* public List<Film> findAll() {
-        log.debug("Получен запрос GET /films.");
-        log.debug("Текущее количество фильмов: {}", filmStorage.getFilms().size());
-        return new ArrayList<>(filmStorage.getFilms().values());
-    }
 
     public void delete(long id) {
         log.debug("Получен запрос DELETE /films/{id}.");
-        Film film = filmStorage.getFilmById(id);
-        validateFilm(film);
-        filmStorage.delete(film);
+        if (filmDbStorage.getFilmById(id).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id - фильма");
+        }
+        filmDbStorage.delete(id);
     }
+}
 
-    public List<Film> getPopularFilms(int count) {
-        return filmStorage.getFilms().values().stream()
-                .sorted(Comparator.comparing(Film::getRate).reversed())
-                .limit(count)
-                .collect(Collectors.toList());
-    }
-*/
+
 

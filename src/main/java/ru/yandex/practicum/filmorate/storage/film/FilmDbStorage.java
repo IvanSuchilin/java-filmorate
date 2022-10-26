@@ -78,8 +78,10 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void delete(Film film) {
-
+    public void delete(long id) {
+        String sqlQuery = "delete from FILMS where FILM_ID = ?";
+        jdbcTemplate.update(sqlQuery, id);
+        log.debug("Фильм с id: {} удален", id);
     }
 
     @Override
@@ -167,15 +169,4 @@ public class FilmDbStorage implements FilmStorage {
     }
 }
 
-   /*@Override
-
-    @Override
-    public void delete(Film film) {
-        if (!films.containsKey(film.getId())) {
-            throw new RuntimeException("Нет такого id");
-        }
-        films.remove(film.getId());
-        log.debug("Пользователь с именем: {} удален", film.getName());
-    }
-*/
 

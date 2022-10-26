@@ -55,13 +55,12 @@ public class FilmController {
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getPopularFilms(count);
     }
-}
 
-
-   /* @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Integer id) {
         filmService.delete(id);
     }
-*/
+}
+
 
 
