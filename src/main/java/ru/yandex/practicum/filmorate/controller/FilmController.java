@@ -57,19 +57,11 @@ public class FilmController {
     }
 }
 
-/*
-    @GetMapping
-    public List<Film> findAll() {
-        return filmService.findAll();
-    }
 
-    @DeleteMapping("/{id}")
+   /* @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Integer id) {
         filmService.delete(id);
     }
+*/
 
-    @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        return filmService.getPopularFilms(count);
-    }*/
 
