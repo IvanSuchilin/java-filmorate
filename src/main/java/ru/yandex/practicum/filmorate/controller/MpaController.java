@@ -16,18 +16,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping
 public class MpaController {
+    private final MpaService mpaService;
 
-        private final MpaService mpaService;
+    @Autowired
+    public MpaController(MpaService mpaService) {
+        this.mpaService = mpaService;
+    }
 
-        @Autowired
-        public MpaController(MpaService mpaService) {
-            this.mpaService = mpaService;
-        }
-
-        @GetMapping("/mpa/{id}")
-        public Optional<Mpa> get(@PathVariable("id") Long id) {
-            return mpaService.getMpaById(id);
-        }
+    @GetMapping("/mpa/{id}")
+    public Optional<Mpa> get(@PathVariable("id") Long id) {
+        return mpaService.getMpaById(id);
+    }
 
     @GetMapping("/mpa")
     public Collection<Mpa> findAll() {

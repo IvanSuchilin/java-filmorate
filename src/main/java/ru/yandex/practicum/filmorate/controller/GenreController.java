@@ -16,7 +16,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping
 public class GenreController {
-
     private final GenreService genreService;
 
     @Autowired

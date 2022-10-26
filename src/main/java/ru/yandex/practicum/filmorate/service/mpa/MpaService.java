@@ -6,9 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.MpaDaoImpl;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
-import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.util.Collection;
 import java.util.Optional;
