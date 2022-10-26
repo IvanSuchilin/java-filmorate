@@ -96,7 +96,6 @@ public class UserService {
         log.debug("Пользователи c id {} и id {} теперь не друзья", id,
                 friendId);
     }
-
     public List<User> getCommonFriend(Long id, Long otherId) {
         if (userDbStorage.getUserById(id).isEmpty() || userDbStorage.getUserById(otherId).isEmpty()) {
             throw new DataNotFoundException("Нет такого id");
