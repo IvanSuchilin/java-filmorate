@@ -44,3 +44,4 @@ build/
 
 *.db
 java-filmorate/db/*
+db/filmorate.mv.db
