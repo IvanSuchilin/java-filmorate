@@ -136,7 +136,7 @@ public class UserDbStorage implements UserStorage {
         return friendsFrom2;
     }
 
-    public void deleteFriend(long id, long friendId){
+    public void deleteFriend(long id, long friendId) {
         String sqlQuery = "delete from FRIENDSHIP where FRIEND1_ID = ? AND FRIEND2_ID = ? " +
                 "OR FRIEND1_ID = ? AND FRIEND2_ID =?";
         jdbcTemplate.update(sqlQuery, id, friendId, friendId, id);

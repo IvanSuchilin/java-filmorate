@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FilmStorage {
-    Collection<Film> getAllFilms();
+    List<Film> getAllFilms();
 
     Film create(Film film);
 
@@ -21,5 +21,5 @@ public interface FilmStorage {
 
     void removeLike(int id, int userId);
 
-    List<Film> getPopularFilms();
+    List<Film> getPopularFilms(int count);
 }

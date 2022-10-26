@@ -4,11 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,9 +22,37 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getAllFilms() {
-        return null;
+    public List<Film> getAllFilms() {
+        String sql = "select * from FILMS F JOIN MPA M ON F.MPA_ID = M.MPA_ID";
+        List<Film> allFilmList = jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> createFilm (rs));
+        return allFilmList;
     }
+
+    private Film createFilm (ResultSet rs) throws SQLException {
+        Film newFilm = new Film(
+                rs.getLong("FILM_ID"),
+                rs.getString("FILM_NAME"),
+                rs.getDate("RELEASE_DATE").toLocalDate(),
+                rs.getString("DESCRIPTION"),
+                rs.getLong("DURATION"),
+                new Mpa(rs.getInt("MPA_ID"),
+                        rs.getString("MPA_INFO")));
+        addGenreToFilm(newFilm);
+        addRateToFilm(newFilm);
+        return newFilm;
+    }
+
+    private void addRateToFilm(Film film) {
+        SqlRowSet likeRows = jdbcTemplate.queryForRowSet("Select COUNT(FILM_ID) AS FILM_LIKES FROM LIKES " +
+                "WHERE FILM_ID = ?", film.getId());
+        if (likeRows.next()) {
+            int likesCount = likeRows.getInt("FILM_LIKES");
+            film.setRate(likesCount);
+        }
+    }
+
 
     @Override
     public Film create(Film film) {
@@ -53,7 +80,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Optional<Film> update(Film film) {
         List<Genre> genres = film.getGenres().stream().distinct().collect(Collectors.toList());
-        film.setGenres(genres);
+       // film.setGenres(genres);
         String sqlQuery = "UPDATE FILMS SET FILM_ID = ?, FILM_NAME = ?,  RELEASE_DATE =?, " +
                 "DESCRIPTION = ?, DURATION =?, MPA_ID=? WHERE FILM_ID = ?";
         jdbcTemplate.update(sqlQuery,
@@ -94,7 +121,8 @@ public class FilmDbStorage implements FilmStorage {
                     filmRows.getLong("DURATION"),
                     new Mpa(filmRows.getInt("MPA_ID"),
                             filmRows.getString("MPA_INFO")));
-            return Optional.of(addGenresToFilm(film));
+            addRateToFilm(film);
+            return Optional.of(addGenreToFilm(film));
         } else {
             log.info("Фильм с идентификатором {} не найден.", id);
             return Optional.empty();
@@ -115,8 +143,7 @@ public class FilmDbStorage implements FilmStorage {
         return genreList;
     }
 
-    public Film addGenresToFilm(Film film) {
-        Collection<Genre> genres = getGenresByFilmId(film.getId());
+    public Film addGenreToFilm(Film film) {
         film.setGenres(getGenresByFilmId(film.getId()));
         return film;
     }
@@ -136,19 +163,10 @@ public class FilmDbStorage implements FilmStorage {
 }
 
     @Override
-    public List<Film> getPopularFilms() {
-        String sql = "";
-        return jdbcTemplate.query(
-                sql,
-                (rs, rowNum) ->
-                        new Film(
-                                rs.getLong("FILM_ID"),
-                                rs.getString("FILM_NAME"),
-                                rs.getDate("RELEASE_DATE").toLocalDate(),
-                                rs.getString("DESCRIPTION"),
-                                rs.getLong("DURATION"),
-                                new Mpa(rs.getInt("MPA_ID"),
-                                        rs.getString("MPA_INFO"))));
+    public List<Film> getPopularFilms(int count) {
+      return  getAllFilms().stream().sorted(Comparator.comparing(Film::getRate).reversed())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }
 

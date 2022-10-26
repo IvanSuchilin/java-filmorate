@@ -68,6 +68,16 @@ public class FilmService {
         filmDbStorage.removeLike(id, userId);
     }
 
+    public List<Film> findAll() {
+        log.debug("Получен запрос GET /films.");
+        return filmDbStorage.getAllFilms();
+    }
+
+    public List<Film> getPopularFilms(int count) {
+        return filmDbStorage.getPopularFilms(count);
+    }
+}
+
    /* public List<Film> getPopularFilms(int count) {
         return filmDbStorage.getPopularFilms().getFilms().values().stream()
                 .sorted(Comparator.comparing(Film::getRate).reversed())
@@ -75,7 +85,7 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
     }*/
-}
+
 
 
 

@@ -45,10 +45,16 @@ public class FilmController {
         filmService.deleteLike(id, userId);
     }
 
-   /* @GetMapping("/popular")
+    @GetMapping
+    public List<Film> findAll() {
+        return filmService.findAll();
+    }
+
+
+    @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getPopularFilms(count);
-    }*/
+    }
 }
 
 /*
