@@ -2,15 +2,16 @@ package ru.yandex.practicum.filmorate.service.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -92,9 +93,9 @@ public class UserService {
             throw new DataNotFoundException("Нет такого id");
         }
         userDbStorage.deleteFriend(id, friendId);
-            log.debug("Пользователи c id {} и id {} теперь не друзья", id,
-                    friendId);
-        }
+        log.debug("Пользователи c id {} и id {} теперь не друзья", id,
+                friendId);
+    }
 
     public List<User> getCommonFriend(Long id, Long otherId) {
         if (userDbStorage.getUserById(id).isEmpty() || userDbStorage.getUserById(otherId).isEmpty()) {
@@ -104,12 +105,12 @@ public class UserService {
         List<User> secondFriendsList = userDbStorage.getFriendsList(otherId);
         log.debug("Получен список общих друзей пользователей id {} и id {}", id,
                 otherId);
-       if (firstFriendsList.isEmpty() || secondFriendsList.isEmpty()) {
+        if (firstFriendsList.isEmpty() || secondFriendsList.isEmpty()) {
             return new ArrayList<>();
         }
-       return firstFriendsList.stream().filter(secondFriendsList::contains)
+        return firstFriendsList.stream().filter(secondFriendsList::contains)
                 .collect(Collectors.toList());
     }
-    }
+}
 
 

@@ -24,10 +24,9 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getAllFilms() {
         String sql = "select * from FILMS F JOIN MPA M ON F.MPA_ID = M.MPA_ID";
-        List<Film> allFilmList = jdbcTemplate.query(
+        return jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> createFilm (rs));
-        return allFilmList;
     }
 
     private Film createFilm (ResultSet rs) throws SQLException {
@@ -133,14 +132,13 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "SELECT  DISTINCT COMBI_FILMS_GENRES.GENRE_ID, GENRE_NAME FROM COMBI_FILMS_GENRES " +
                 "JOIN GENRES G2 on G2.GENRE_ID = COMBI_FILMS_GENRES.GENRE_ID\n" +
                 "                  WHERE COMBI_FILMS_GENRES.FILM_ID = ?" +
-                "ORDER BY COMBI_FILMS_GENRES.GENRE_ID ASC";
-        List<Genre> genreList = jdbcTemplate.query(
+                "ORDER BY COMBI_FILMS_GENRES.GENRE_ID ";
+        return jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> new Genre(
                         rs.getInt("GENRE_ID"),
                         rs.getString("GENRE_NAME")), id
         );
-        return genreList;
     }
 
     public Film addGenreToFilm(Film film) {
