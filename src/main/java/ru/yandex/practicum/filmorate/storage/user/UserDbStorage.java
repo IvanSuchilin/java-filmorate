@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.util.*;
 
@@ -15,6 +16,7 @@ import static ru.yandex.practicum.filmorate.constants.ConstantSqlStorage.ALL_FRO
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final Validation validation = new Validation();
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -37,6 +39,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
+            validation.validateUser(user);
         String sqlQuery = "insert into CLIENTS(CLIENT_ID, CLIENT_EMAIL, LOGIN, CLIENT_NAME, BIRTHDAY) " +
                 "values (?, ?, ?, ?, ?)";
         jdbcTemplate.update(sqlQuery,
@@ -50,7 +53,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-
+        validation.validateUser(user);
         String sqlQuery = "update CLIENTS set " +
                 "CLIENT_EMAIL = ?, LOGIN = ?, CLIENT_NAME = ?, BIRTHDAY = ?" +
                 "where CLIENT_ID = ?";

@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -50,6 +52,17 @@ class FilmDbStorageTest {
     @Test
     @Sql(scripts = {"file:dbTest/scripts/testSchema.sql",
             "file:dbTest/scripts/testData.sql", "file:dbTest/scripts/addFilms.sql"})
+    void createWrongFilmTest() {
+        Film newFilm = new Film(3L, "name3", LocalDate.of(1500, 10, 12),
+                "java3", 60, new Mpa(1, "G"));
+        ValidationException thrown = Assertions.assertThrows(ValidationException.class,
+                () -> filmDbStorage.update(newFilm));
+        Assertions.assertEquals("Дата релиза не должна быть раньше 28.12.1985", thrown.getReason());
+    }
+
+    @Test
+    @Sql(scripts = {"file:dbTest/scripts/testSchema.sql",
+            "file:dbTest/scripts/testData.sql", "file:dbTest/scripts/addFilms.sql"})
     void updateTest() {
         Film newFilm = new Film(2L, "name32", LocalDate.of(2000, 10, 12),
                 "java3", 60, new Mpa(1, "G"));
@@ -60,6 +73,16 @@ class FilmDbStorageTest {
                 .hasValueSatisfying(film ->
                         assertThat(film).hasFieldOrPropertyWithValue("name", "name32")
                 );
+    }
+    @Test
+    @Sql(scripts = {"file:dbTest/scripts/testSchema.sql",
+            "file:dbTest/scripts/testData.sql", "file:dbTest/scripts/addFilms.sql"})
+    void updateWrongFilmTest() {
+        Film newFilm = new Film(2L, "name32", LocalDate.of(2000, 10, 12),
+                "java3", -60, new Mpa(1, "G"));
+        ValidationException thrown = Assertions.assertThrows(ValidationException.class,
+                () -> filmDbStorage.update(newFilm));
+        Assertions.assertEquals("Продолжительность фильма должна быть положительной", thrown.getReason());
     }
 
     @Test

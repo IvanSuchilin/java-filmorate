@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +19,7 @@ import static ru.yandex.practicum.filmorate.constants.ConstantSqlStorage.ALL_FRO
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final Validation validation = new Validation();
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -33,6 +35,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
+        validation.validateFilm(film);
         String sqlQuery = "insert into FILMS(FILM_ID, FILM_NAME,  RELEASE_DATE, DESCRIPTION, DURATION, MPA_ID) " +
                 "values (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sqlQuery,
@@ -56,6 +59,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Optional<Film> update(Film film) {
+        validation.validateFilm(film);
         List<Genre> genres = film.getGenres().stream().distinct().collect(Collectors.toList());
         String sqlQuery = "UPDATE FILMS SET FILM_ID = ?, FILM_NAME = ?,  RELEASE_DATE =?, " +
                 "DESCRIPTION = ?, DURATION =?, MPA_ID=? WHERE FILM_ID = ?";
