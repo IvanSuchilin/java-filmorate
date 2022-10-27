@@ -9,10 +9,13 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.yandex.practicum.filmorate.constants.ConstantSqlStorage.ALL_FROM_GENRES;
+
 @Slf4j
 @Component
 public class GenreDaoImpl implements GenreDao {
     private final JdbcTemplate jdbcTemplate;
+
 
     public GenreDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -21,7 +24,7 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public Optional<Genre> getGenreById(long id) {
         log.debug("Получен запрос GET/genres/{id}");
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from GENRES where GENRE_ID = ?", id);
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(ALL_FROM_GENRES + " WHERE PUBLIC.GENRES.GENRE_ID = ?", id);
         if (mpaRows.next()) {
             Genre genre = new Genre(
                     mpaRows.getInt("GENRE_ID"),
@@ -37,9 +40,8 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public List<Genre> getAllGenre() {
         log.debug("Получен запрос GET /genres.");
-        String sql = "SELECT * FROM GENRES";
         return jdbcTemplate.query(
-                sql,
+                ALL_FROM_GENRES,
                 (rs, rowNum) ->
                         new Genre(
                                 rs.getInt("GENRE_ID"),

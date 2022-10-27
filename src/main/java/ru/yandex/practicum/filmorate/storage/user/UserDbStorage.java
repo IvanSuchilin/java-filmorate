@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 
+import static ru.yandex.practicum.filmorate.constants.ConstantSqlStorage.ALL_FROM_CLIENTS;
+
 @Slf4j
 @Component("UserDbStorage")
 public class UserDbStorage implements UserStorage {
@@ -20,9 +22,8 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllUsers() {
-        String sql = "SELECT * FROM CLIENTS";
         return jdbcTemplate.query(
-                sql,
+                ALL_FROM_CLIENTS,
                 (rs, rowNum) ->
                         new User(
                                 rs.getLong("CLIENT_ID"),
@@ -70,7 +71,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Optional<User> getUserById(long id) {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from CLIENTS where CLIENT_ID = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(ALL_FROM_CLIENTS +" where CLIENT_ID = ?", id);
         if (userRows.next()) {
             User user = new User(
                     userRows.getLong("CLIENT_ID"),

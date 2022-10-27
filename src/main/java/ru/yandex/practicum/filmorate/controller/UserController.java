@@ -22,26 +22,31 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public Optional<User> get(@PathVariable("id") Long id) {
+        log.info("Получение пользователя id {}", id);
         return userService.getUser(id);
     }
 
     @PostMapping("/users")
     public User create(@RequestBody User user) {
+        log.info("Создание пользователя");
         return userService.create(user);
     }
 
     @PutMapping("/users")
     public User put(@RequestBody User user) {
+        log.info("Получени евсех пользователей");
         return userService.update(user);
     }
 
     @DeleteMapping("/users/{id}")
     public void delete(@PathVariable("id") Long id) {
+        log.info("Удаление пользователя id {}", id);
         userService.delete(id);
     }
 
     @GetMapping("/users")
     public Collection<User> findAll() {
+        log.info("Получение всех пользователей");
         return userService.findAll();
     }
 
@@ -53,6 +58,7 @@ public class UserController {
 
     @GetMapping("/users/{id}/friends")
     public List<User> getFriendsList(@PathVariable("id") Long id) {
+        log.info("Получение списка друзей пользователя {}", id);
         return userService.getFriendsList(id);
     }
 

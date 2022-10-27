@@ -9,6 +9,8 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.yandex.practicum.filmorate.constants.ConstantSqlStorage.ALL_FROM_MPA;
+
 @Slf4j
 @Component
 public class MpaDaoImpl implements MpaDao {
@@ -22,7 +24,7 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public Optional<Mpa> getMpaById(long id) {
         log.debug("Получен запрос GET/mpa/{id}");
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from MPA where MPA_ID = ?", id);
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(ALL_FROM_MPA + " WHERE MPA_ID = ?", id);
         if (mpaRows.next()) {
             Mpa mpa = new Mpa(
                     mpaRows.getInt("MPA_ID"),
@@ -38,9 +40,8 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public List<Mpa> getAllMpa() {
         log.debug("Получен запрос GET/mpa");
-        String sql = "SELECT * FROM MPA";
         return jdbcTemplate.query(
-                sql,
+                ALL_FROM_MPA,
                 (rs, rowNum) ->
                         new Mpa(
                                 rs.getInt("MPA_ID"),

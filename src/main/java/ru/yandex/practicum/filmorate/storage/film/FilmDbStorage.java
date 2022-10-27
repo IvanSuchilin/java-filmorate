@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.yandex.practicum.filmorate.constants.ConstantSqlStorage.ALL_FROM_FILMS;
+
 @Slf4j
 @Component("FilmDbStorage")
 public class FilmDbStorage implements FilmStorage {
@@ -23,7 +25,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-        String sql = "select * from FILMS F JOIN MPA M ON F.MPA_ID = M.MPA_ID";
+        String sql = ALL_FROM_FILMS + " F JOIN MPA M ON F.MPA_ID = M.MPA_ID";
         return jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> createFilm(rs));
@@ -86,7 +88,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Optional<Film> getFilmById(long id) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from FILMS F " +
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet(ALL_FROM_FILMS+ " F " +
                 "JOIN MPA M ON F.MPA_ID = M.MPA_ID where FILM_ID = ?", id);
         if (filmRows.next()) {
             Film film = new Film(
