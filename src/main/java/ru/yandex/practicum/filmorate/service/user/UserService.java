@@ -97,6 +97,7 @@ public class UserService {
                 friendId);
     }
     public List<User> getCommonFriend(Long id, Long otherId) {
+        log.debug("Получен запрос GET /users/{id}/friends/common/{otherId}.");
         if (userDbStorage.getUserById(id).isEmpty() || userDbStorage.getUserById(otherId).isEmpty()) {
             throw new DataNotFoundException("Нет такого id");
         }

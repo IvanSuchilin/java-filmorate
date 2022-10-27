@@ -21,6 +21,7 @@ public class MpaService {
     }
 
     public Optional<Mpa> getMpaById(long id) {
+        log.debug("Получен запрос PUT /users.");
         if (mpaDaoimpl.getMpaById(id).isEmpty()) {
             throw new DataNotFoundException("Нет такого id");
         }

@@ -20,8 +20,8 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public Optional<Genre> getGenreById(long id) {
+        log.debug("Получен запрос GET/genres/{id}");
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from GENRES where GENRE_ID = ?", id);
-
         if (mpaRows.next()) {
             Genre genre = new Genre(
                     mpaRows.getInt("GENRE_ID"),
@@ -36,6 +36,7 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public List<Genre> getAllGenre() {
+        log.debug("Получен запрос GET /genres.");
         String sql = "SELECT * FROM GENRES";
         return jdbcTemplate.query(
                 sql,

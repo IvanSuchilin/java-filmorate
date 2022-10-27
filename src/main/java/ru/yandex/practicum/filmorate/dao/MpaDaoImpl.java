@@ -21,8 +21,8 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public Optional<Mpa> getMpaById(long id) {
+        log.debug("Получен запрос GET/mpa/{id}");
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from MPA where MPA_ID = ?", id);
-
         if (mpaRows.next()) {
             Mpa mpa = new Mpa(
                     mpaRows.getInt("MPA_ID"),
@@ -37,6 +37,7 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public List<Mpa> getAllMpa() {
+        log.debug("Получен запрос GET/mpa");
         String sql = "SELECT * FROM MPA";
         return jdbcTemplate.query(
                 sql,
