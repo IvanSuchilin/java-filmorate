@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -19,23 +19,13 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final Validation validation;
-    private final UserStorage userStorage;
+    private final UserStorage userDbStorage;
     private long userId = 0;
 
     @Autowired
-    public UserService(Validation validation, InMemoryUserStorage userStorage) {
+    public UserService(Validation validation, UserStorage userDbStorage) {
         this.validation = validation;
-        this.userStorage = userStorage;
-    }
-
-    public void validateUser(User user) {
-        validation.validateUser(user);
-    }
-
-    public List<User> findAll() {
-        log.debug("Получен запрос GET /users.");
-        log.debug("Текущее количество пользователей: {}", userStorage.getUsers().size());
-        return new ArrayList<>(userStorage.getUsers().values());
+        this.userDbStorage = userDbStorage;
     }
 
     public User create(User user) {
@@ -43,77 +33,84 @@ public class UserService {
         validateUser(user);
         userId++;
         user.setId(userId);
-        return userStorage.create(user);
+        return userDbStorage.create(user);
+    }
+
+    public void validateUser(User user) {
+        validation.validateUser(user);
     }
 
     public User update(User user) {
-        Map<Long, User> actualUsers = userStorage.getUsers();
-        if (!actualUsers.containsKey(user.getId())) {
+        log.debug("Получен запрос PUT /users.");
+        validateUser(user);
+        if (userDbStorage.getUserById(user.getId()).isEmpty()) {
             throw new DataNotFoundException("Нет такого id");
         }
-        validateUser(user);
-        log.debug("Получен запрос PUT /users.");
-        return userStorage.update(user);
+        return userDbStorage.update(user);
     }
 
     public void delete(long id) {
         log.debug("Получен запрос DELETE /users/{id}.");
-        User user = userStorage.getUserById(id);
-        validateUser(user);
-        userStorage.delete(user);
+        userDbStorage.delete(id);
+    }
+
+
+    public Collection<User> findAll() {
+        log.debug("Получен запрос GET /users.");
+        return userDbStorage.getAllUsers();
     }
 
     public void addFriend(long id, long friendId) {
         log.debug("Получен запрос PUT /users/{id}/friends/{friendId}.");
-        User firstFriend = userStorage.getUserById(id);
-        User secondFriend = userStorage.getUserById(friendId);
-        firstFriend.getFriendsId().add(friendId);
-        secondFriend.getFriendsId().add(id);
-        log.debug("Пользователи {} и {} теперь друзья", firstFriend.getName(),
-                secondFriend.getName());
+        if (userDbStorage.getUserById(id).isEmpty() || userDbStorage.getUserById(friendId).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id");
+        }
+        userDbStorage.addFriend(id, friendId);
+        log.debug("Пользователи c id {} и id {} теперь друзья", id,
+                friendId);
     }
 
-    public void deleteFriend(long id, long friendId) {
-        log.debug("Получен запрос DELETE /users/{id}/friends/{friendId}.");
-        User firstFriend = userStorage.getUserById(id);
-        User secondFriend = userStorage.getUserById(friendId);
-        if (firstFriend.getFriendsId().contains(friendId)) {
-            firstFriend.getFriendsId().remove(friendId);
-        }
-        if (secondFriend.getFriendsId().contains(friendId)) {
-            secondFriend.getFriendsId().remove(id);
-            log.debug("Пользователи {} и {} теперь не друзья", firstFriend.getName(),
-                    secondFriend.getName());
-        }
-    }
-
-    public List<User> getCommonFriend(long id, long otherId) {
-        Map<Long, User> actualUsers = userStorage.getUsers();
-        User firstFriend = userStorage.getUserById(id);
-        User secondFriend = userStorage.getUserById(otherId);
-        List<Long> firstFriendsList = firstFriend.getFriendsId();
-        List<Long> secondFriendsList = secondFriend.getFriendsId();
-        log.debug("Получен список общих друзей пользователей {} и {}", firstFriend.getName(),
-                secondFriend.getName());
-        if (firstFriendsList.isEmpty() || secondFriendsList.isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<Long> commonIdList = firstFriendsList.stream().filter(secondFriendsList::contains)
-                .collect(Collectors.toList());
-        return commonIdList.stream().map(actualUsers::get).collect(Collectors.toList());
-    }
-
-    public User getUser(Long id) {
+    public Optional<User> getUser(Long id) {
         log.debug("Получен запрос GET /users/{id}");
-        return userStorage.getUserById(id);
+        if (userDbStorage.getUserById(id).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id");
+        }
+        return userDbStorage.getUserById(id);
     }
 
     public List<User> getFriendsList(long id) {
         log.debug("Получен запрос GET /users/{id}/friends");
-        User user = userStorage.getUserById(id);
-        Map<Long, User> actualUsers = userStorage.getUsers();
-        log.debug("Получен список друзей пользователя {}", user.getName());
-        return user.getFriendsId().stream().map(actualUsers::get).collect(Collectors.toList());
+        if (userDbStorage.getUserById(id).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id");
+        }
+        log.debug("Получен список друзей пользователя c id {}", id);
+        return userDbStorage.getFriendsList(id);
+    }
+
+    public void deleteFriend(long id, long friendId) {
+        log.debug("Получен запрос DELETE /users/{id}/friends/{friendId}.");
+        if (userDbStorage.getUserById(id).isEmpty() || userDbStorage.getUserById(friendId).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id");
+        }
+        userDbStorage.deleteFriend(id, friendId);
+        log.debug("Пользователи c id {} и id {} теперь не друзья", id,
+                friendId);
+    }
+    public List<User> getCommonFriend(Long id, Long otherId) {
+        log.debug("Получен запрос GET /users/{id}/friends/common/{otherId}.");
+        if (userDbStorage.getUserById(id).isEmpty() || userDbStorage.getUserById(otherId).isEmpty()) {
+            throw new DataNotFoundException("Нет такого id");
+        }
+        List<User> firstFriendsList = userDbStorage.getFriendsList(id);
+        List<User> secondFriendsList = userDbStorage.getFriendsList(otherId);
+        log.debug("Получен список общих друзей пользователей id {} и id {}", id,
+                otherId);
+        if (firstFriendsList.isEmpty() || secondFriendsList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return firstFriendsList.stream().filter(secondFriendsList::contains)
+                .collect(Collectors.toList());
     }
 }
+
 

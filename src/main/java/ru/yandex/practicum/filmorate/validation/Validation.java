@@ -30,6 +30,10 @@ public class Validation {
             log.error("Продолжительность фильма должна быть положительной");
             throw new ValidationException(HttpStatus.BAD_REQUEST, "Продолжительность фильма должна быть положительной");
         }
+        if (film.getMpa() == null) {
+            log.error("Некорректное MPA");
+            throw new ValidationException(HttpStatus.BAD_REQUEST, "Некорректное MPA");
+        }
     }
 
     public void validateUser(User user) {
